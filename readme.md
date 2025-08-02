@@ -27,7 +27,7 @@ This is a custom Neovim configuration script written in Lua. It includes various
 
 - Download configs:
     ```bash
-    curl -s https://raw.githubusercontent.com/grisha765/my_neovim/main/install.sh | bash
+    curl -s https://raw.githubusercontent.com/ergolyam/my_neovim/main/install.sh | bash
     ```
 
 - Download with podman:
@@ -39,7 +39,7 @@ This is a custom Neovim configuration script written in Lua. It includes various
             -v $HOME/.config/lazygit:/root/.config/lazygit:Z \
             fedora bash -c \
                     "dnf install -y neovim gcc git && \
-                            curl -s https://raw.githubusercontent.com/grisha765/my_neovim/main/install.sh | bash"
+                            curl -s https://raw.githubusercontent.com/ergolyam/my_neovim/main/install.sh | bash"
     ```
 
 ### Autocomplete

@@ -18,7 +18,7 @@ fi
 
 if [ -d "$script_dir/.git" ]; then
   echo "Script dir: $script_dir"
-  expected_url="github.com:grisha765/my_neovim.git"
+  expected_url="github.com:ergolyam/my_neovim.git"
   remote_short_url=""
   if git -C "$script_dir" remote get-url origin &>/dev/null; then
     remote_url="$(git -C "$script_dir" remote get-url origin)"
@@ -43,7 +43,7 @@ if ! $use_local_repo; then
 fi
 
 base_config="$HOME/.config"
-base_url="https://raw.githubusercontent.com/grisha765/my_neovim/main"
+base_url="https://raw.githubusercontent.com/ergolyam/my_neovim/main"
 
 mkdir -pv ~/.config/nvim/lua
 mkdir -pv ~/.config/lazygit
