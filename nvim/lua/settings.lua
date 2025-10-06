@@ -20,7 +20,18 @@ vim.cmd('syntax on')
 -- Переключение между Normal и Insert с помощью клавиши "INSERT"
 vim.api.nvim_set_keymap('i', '<Insert>', '<Esc>', { noremap = true })
 
--- Доступ к системному буферу
+vim.g.clipboard = {
+  name = "wl-clipboard",
+  copy = {
+    ["+"] = "wl-copy",
+    ["*"] = "wl-copy --primary",
+  },
+  paste = {
+    ["+"] = "wl-paste --no-newline",
+    ["*"] = "wl-paste --primary --no-newline",
+  },
+  cache_enabled = 1,
+}
 vim.opt.clipboard = "unnamedplus"
 
 -- Удаление а не вырезание
