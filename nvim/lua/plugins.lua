@@ -1,4 +1,3 @@
--- Установка Lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
@@ -12,37 +11,34 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Установка плагинов с Lazy.nvim
 require('lazy').setup({
-  'neovim/nvim-lspconfig', -- конфигурация lsp
-  'hrsh7th/nvim-cmp', -- Основной плагин для автодополнения
-  'hrsh7th/cmp-nvim-lsp', -- Источник LSP для nvim-cmp
-  'hrsh7th/cmp-buffer', -- Источник буфера
-  'hrsh7th/cmp-path', -- Источник путей файловой системы
-  'hrsh7th/cmp-cmdline', -- Источник командной строки
-  { 'j-hui/fidget.nvim', opts = {} }, -- Статус обновления LSP
-  'L3MON4D3/LuaSnip', -- Плагин для сниппетов
-  'saadparwaiz1/cmp_luasnip', -- Источник для LuaSnip
-  'justinmk/vim-sneak', -- Удобный поиск
-  'windwp/nvim-autopairs', -- Форматирование скобок
-  'psliwka/vim-smoothie', -- Плавная прокрутка
-  { 'nvim-treesitter/nvim-treesitter', build = ":TSUpdate" }, -- Подсветка кода
+  'neovim/nvim-lspconfig', 
+  'hrsh7th/nvim-cmp', 
+  'hrsh7th/cmp-nvim-lsp', 
+  'hrsh7th/cmp-buffer', 
+  'hrsh7th/cmp-path', 
+  'hrsh7th/cmp-cmdline', 
+  { 'j-hui/fidget.nvim', opts = {} }, 
+  'L3MON4D3/LuaSnip', 
+  'saadparwaiz1/cmp_luasnip', 
+  'justinmk/vim-sneak', 
+  'windwp/nvim-autopairs', 
+  'psliwka/vim-smoothie', 
+  { 'nvim-treesitter/nvim-treesitter', build = ":TSUpdate" }, 
   { 'kdheepak/lazygit.nvim',
 		cmd = { "LazyGit", "LazyGitConfig", "LazyGitCurrentFile", "LazyGitFilter", "LazyGitFilterCurrentFile", },
 		dependencies = { "nvim-lua/plenary.nvim", },
 		keys = { { "lg", "<cmd>LazyGit<cr>", desc = "LazyGit" } }
-	}, -- Плагин для удобного управления git
-  -- VS Code Color Schemes
+	}, 
   'Mofiqul/vscode.nvim',
   { 'nvim-telescope/telescope-file-browser.nvim', 
     dependencies = { 'nvim-telescope/telescope.nvim',
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope-fzf-native.nvim',
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font } },
-  }, -- Удобный файловый менеджер
+  }, 
 })
 
-local lspconfig = require('lspconfig')
 vim.diagnostic.config({
   virtual_text = {
     prefix = '',
@@ -52,78 +48,77 @@ vim.diagnostic.config({
 })
 
 local cmp = require('cmp')
+local luasnip = require('luasnip')
 
--- Настройка nvim-cmp
 cmp.setup({
   snippet = {
-    expand = function(args)
-      require('luasnip').lsp_expand(args.body)
-    end,
+    expand = function(args) luasnip.lsp_expand(args.body) end,
   },
-  mapping = {
-    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.abort(),
-    ['<CR>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        fallback()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-    ['<Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
+  mapping = cmp.mapping.preset.insert({
+    ['<C-b>']   = cmp.mapping.scroll_docs(-4),
+    ['<C-f>']   = cmp.mapping.scroll_docs(4),
+    ['<C-Space>']= cmp.mapping.complete(),
+    ['<C-e>']   = cmp.mapping.abort(),
+    ['<CR>']    = cmp.mapping.confirm({ select = true }), 
+    ['<Tab>']   = cmp.mapping(function(fallback)
+      if cmp.visible() then cmp.select_next_item()
+      elseif luasnip.expand_or_jumpable() then luasnip.expand_or_jump()
+      else fallback() end
+    end, { 'i','s' }),
     ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-  },
+      if cmp.visible() then cmp.select_prev_item()
+      elseif luasnip.jumpable(-1) then luasnip.jump(-1)
+      else fallback() end
+    end, { 'i','s' }),
+  }),
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
-    { name = 'luasnip' },
+    { name = 'luasnip'  },
     { name = 'buffer', keyword_length = 3 },
-    { name = 'path' },
-  })
+    { name = 'path'     },
+  }),
 })
 
--- Настройка LSP серверов
-local servers = { 'pyright', 'ts_ls', 'jdtls'}
-local android_sdk = '/home/grisha/.local/share/android-sdk'
-for _, lsp in ipairs(servers) do
-  lspconfig[lsp].setup {
-    capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities()),
-    settings = {
-      java = {
-        project = {
-          referencedLibraries = {
-            android_sdk .. '/platforms/android-33/android.jar',
-          }
-        }
-      }
-    },
-    on_attach = function(client, bufnr)
-      -- Настройка ключевых привязок для LSP
-      local opts = { noremap=true, silent=true }
-      vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-      vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-      vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-      vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-      vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-      vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-    end,
-  }
+require('nvim-autopairs').setup({
+  check_ts = true,
+  map_cr = false, 
+})
+local cmp_ap = require('nvim-autopairs.completion.cmp')
+cmp.event:on('confirm_done', cmp_ap.on_confirm_done())
+
+local capabilities = require('cmp_nvim_lsp')
+  .default_capabilities(vim.lsp.protocol.make_client_capabilities())
+
+local function on_attach(_, bufnr)
+  local map = function(mode, lhs, rhs) vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, silent = true }) end
+  map('n', 'gd', vim.lsp.buf.definition)
+  map('n', 'K',  vim.lsp.buf.hover)
+  map('n', 'gi', vim.lsp.buf.implementation)
+  map('n', '<C-k>', vim.lsp.buf.signature_help)
+  map('n', '<space>rn', vim.lsp.buf.rename)
+  map('n', 'gr', vim.lsp.buf.references)
 end
 
--- Настройка Treesitter
+local android_sdk = '/home/grisha/.local/share/android-sdk'
+
+vim.lsp.config('pyright', { capabilities = capabilities, on_attach = on_attach })
+vim.lsp.config('ts_ls',   { capabilities = capabilities, on_attach = on_attach })
+vim.lsp.config('jdtls', {
+  capabilities = capabilities,
+  on_attach = on_attach,
+  settings = {
+    java = {
+      project = {
+        referencedLibraries = { android_sdk .. '/platforms/android-33/android.jar' }
+      }
+    }
+  }
+})
+
+for _, name in ipairs({ 'pyright', 'ts_ls', 'jdtls' }) do
+  vim.lsp.enable(name)
+end
+
 require('nvim-treesitter.configs').setup {
   ensure_installed = {
     "python", "javascript", 
@@ -140,13 +135,11 @@ require('nvim-treesitter.configs').setup {
   },
 }
 
--- Настройка nvim-autopairs
 require('nvim-autopairs').setup({
   check_ts = true,
   map_cr = true,
 })
 
--- Настройка telescope-file-browser
 require('telescope').setup({
   extensions = {
     file_browser = {
@@ -167,7 +160,7 @@ local actions = require("telescope.actions")
 local fb = require("telescope").extensions.file_browser.file_browser
 
 _G.openFileBrowserInNewTab = function()
-  vim.cmd("tabnew") -- открываем новый таб
+  vim.cmd("tabnew") 
   fb({
     attach_mappings = function(prompt_bufnr, map)
       local function closeTelescopeAndTab()
@@ -183,7 +176,6 @@ _G.openFileBrowserInNewTab = function()
   })
 end
 
--- Установка цветовой схемы
 vim.cmd [[
   colorscheme vscode
   let g:vscode_style = 'dark'
