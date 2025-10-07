@@ -20,6 +20,15 @@ vim.cmd('syntax on')
 -- Переключение между Normal и Insert с помощью клавиши "INSERT"
 vim.api.nvim_set_keymap('i', '<Insert>', '<Esc>', { noremap = true })
 
+-- Удобное сокращение
+local keymap = vim.keymap.set
+
+-- Движение курсора в insert режиме
+keymap('i', '<C-h>', '<Left>', opts)
+keymap('i', '<C-j>', '<Down>', opts)
+keymap('i', '<C-k>', '<Up>', opts)
+keymap('i', '<C-l>', '<Right>', opts)
+
 vim.g.clipboard = {
   name = "wl-clipboard",
   copy = {
