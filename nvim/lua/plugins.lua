@@ -27,8 +27,7 @@ require('lazy').setup({
   { 'nvim-treesitter/nvim-treesitter', build = ":TSUpdate" }, 
   { 'kdheepak/lazygit.nvim',
 		cmd = { "LazyGit", "LazyGitConfig", "LazyGitCurrentFile", "LazyGitFilter", "LazyGitFilterCurrentFile", },
-		dependencies = { "nvim-lua/plenary.nvim", },
-		keys = { { "lg", "<cmd>LazyGit<cr>", desc = "LazyGit" } }
+		dependencies = { "nvim-lua/plenary.nvim", }
 	}, 
   'Mofiqul/vscode.nvim',
   { 'nvim-telescope/telescope-file-browser.nvim', 
@@ -36,7 +35,8 @@ require('lazy').setup({
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope-fzf-native.nvim',
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font } },
-  }, 
+  },
+  { 'Wansmer/langmapper.nvim', lazy = false, priority = 1 }
 })
 
 vim.diagnostic.config({
@@ -175,6 +175,21 @@ _G.openFileBrowserInNewTab = function()
     end
   })
 end
+
+local function escape(str)
+  local escape_chars = [[;,."|\]]
+  return vim.fn.escape(str, escape_chars)
+end
+
+local en = [[`qwertyuiop[]asdfghjkl;'zxcvbnm]]
+local ru = [[ёйцукенгшщзхъфывапролджэячсмить]]
+local en_shift = [[~QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>]]
+local ru_shift = [[ËЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ]]
+
+vim.opt.langmap = vim.fn.join({
+    escape(ru_shift) .. ';' .. escape(en_shift),
+    escape(ru) .. ';' .. escape(en),
+}, ',')
 
 vim.cmd [[
   colorscheme vscode
