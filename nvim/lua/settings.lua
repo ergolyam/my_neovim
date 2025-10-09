@@ -1,6 +1,9 @@
 -- Включить номера строк
 vim.opt.number = true
 
+vim.o.statusline = "%F"
+vim.o.laststatus = 2
+
 -- Выключить мышь
 vim.o.mouse = ''
 
