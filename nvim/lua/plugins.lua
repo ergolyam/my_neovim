@@ -60,7 +60,13 @@ cmp.setup({
     ['<C-f>']   = cmp.mapping.scroll_docs(4),
     ['<C-Space>']= cmp.mapping.complete(),
     ['<C-e>']   = cmp.mapping.abort(),
-    ['<CR>']    = cmp.mapping.confirm({ select = true }), 
+    ['<CR>'] = cmp.mapping(function(fallback)
+      if cmp.visible() and cmp.get_selected_entry() then
+        cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
     ['<Tab>']   = cmp.mapping(function(fallback)
       if cmp.visible() then cmp.select_next_item()
       elseif luasnip.expand_or_jumpable() then luasnip.expand_or_jump()
@@ -82,7 +88,7 @@ cmp.setup({
 
 require('nvim-autopairs').setup({
   check_ts = true,
-  map_cr = false, 
+  map_cr = true, 
 })
 local cmp_ap = require('nvim-autopairs.completion.cmp')
 cmp.event:on('confirm_done', cmp_ap.on_confirm_done())
@@ -135,11 +141,6 @@ require('nvim-treesitter.configs').setup {
     enable = true,
   },
 }
-
-require('nvim-autopairs').setup({
-  check_ts = true,
-  map_cr = true,
-})
 
 require('telescope').setup({
   extensions = {
