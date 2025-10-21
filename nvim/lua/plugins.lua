@@ -27,7 +27,8 @@ require('lazy').setup({
   { 'nvim-treesitter/nvim-treesitter', build = ":TSUpdate" }, 
   { 'kdheepak/lazygit.nvim',
 		cmd = { "LazyGit", "LazyGitConfig", "LazyGitCurrentFile", "LazyGitFilter", "LazyGitFilterCurrentFile", },
-		dependencies = { "nvim-lua/plenary.nvim", }
+		dependencies = { "nvim-lua/plenary.nvim", },
+		keys = { { "lg", "<cmd>LazyGit<cr>", desc = "LazyGit" } }
 	}, 
   'Mofiqul/vscode.nvim',
   { 'nvim-telescope/telescope-file-browser.nvim', 
