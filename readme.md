@@ -52,7 +52,7 @@ This is a custom Neovim configuration script written in Lua. It includes various
 - Download pyright:
     ```bash
     python -m ensurepip --upgrade &&\
-    python -m pip install pyright
+    python -m pip install pyright[nodejs]
     ```
 
 - Download ts lang server:
