@@ -32,14 +32,19 @@ This is a custom Neovim configuration script written in Lua. It includes various
 
 - Download with podman:
     ```bash
+    mkdir -p \
+        $HOME/.config/nvim \
+        $HOME/.cache/nvim \
+        $HOME/.local/share/nvim \
+        $HOME/.config/lazygit &&
     podman run --rm -it \
-            -v $HOME/.config/nvim:/root/.config/nvim:Z \
-            -v $HOME/.cache/nvim:/root/.cache/nvim:Z \
-            -v $HOME/.local/share/nvim:/root/.local/share/nvim:Z \
-            -v $HOME/.config/lazygit:/root/.config/lazygit:Z \
+        -v $HOME/.config/nvim:/root/.config/nvim:Z \
+        -v $HOME/.cache/nvim:/root/.cache/nvim:Z \
+        -v $HOME/.local/share/nvim:/root/.local/share/nvim:Z \
+        -v $HOME/.config/lazygit:/root/.config/lazygit:Z \
             fedora bash -c \
-                    "dnf install -y neovim gcc git && \
-                            curl -s https://raw.githubusercontent.com/ergolyam/my_neovim/main/install.sh | bash"
+                "dnf install -y neovim gcc git && \
+                    curl -s https://raw.githubusercontent.com/ergolyam/my_neovim/main/install.sh | bash"
     ```
 
 ### Autocomplete
