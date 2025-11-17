@@ -56,7 +56,6 @@ lua_modules=(
   "settings.lua"
   "tabs.lua"
   "terminal.lua"
-  "autosave.lua"
   )
 
 if [ -d "$script_dir/.git" ]; then
